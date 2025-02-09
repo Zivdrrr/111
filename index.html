@@ -6,26 +6,49 @@
     <title>Калькулятор</title>
     <script>
         function calculate() {
-          
+            // Отримуємо значення з полів введення
             let num1 = parseFloat(document.getElementById('num1').value);
             let num2 = parseFloat(document.getElementById('num2').value);
+            let operator = document.getElementById('operator').value;
             
-      
+            // Перевірка на правильність введення
             if (isNaN(num1) || isNaN(num2)) {
                 alert("Будь ласка, введіть правильні числа!");
                 return;
             }
 
-            // Обчислення результату (сума двох чисел)
-            let result = num1 + num2;
+            let result;
+
+            // Вибір операції залежно від вибраного оператора
+            switch (operator) {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    if (num2 === 0) {
+                        alert("Ділення на нуль неможливе!");
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                default:
+                    alert("Будь ласка, виберіть операцію!");
+                    return;
+            }
             
-            // Виводимо результат у поле для результату
+            // Виводимо результат
             document.getElementById('result').value = result;
         }
     </script>
 </head>
 <body>
-    <h1>Простий калькулятор</h1>
+    <h1>Калькулятор</h1>
     <form>
         <label for="num1">Число 1:</label>
         <input type="number" id="num1" placeholder="Введіть число 1">
@@ -33,11 +56,23 @@
         <label for="num2">Число 2:</label>
         <input type="number" id="num2" placeholder="Введіть число 2">
         <br><br>
+        
+        <label for="operator">Операція:</label>
+        <select id="operator">
+            <option value="+">Додавання (+)</option>
+            <option value="-">Віднімання (-)</option>
+            <option value="*">Множення (*)</option>
+            <option value="/">Ділення (/)</option>
+        </select>
+        <br><br>
+        
         <label for="result">Результат:</label>
         <input type="text" id="result" readonly placeholder="Результат буде тут">
         <br><br>
+        
         <button type="button" onclick="calculate()">Обчислити</button>
     </form>
 </body>
 </html>
+
 
