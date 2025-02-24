@@ -23,30 +23,40 @@
 <body>
     <div class="container">
         <h1>Задача лінійного програмування (Максимізація прибутку)</h1>
+        
+        <!-- Форма вводу -->
         <form id="form">
-            <label for="C">Максимальна добова потреба в фарбах (C): </label>
-            <input type="number" id="C" value="4" required><br><br>
-            <label for="x1_limit">Максимальна кількість внутрішньої фарби (x1): </label>
-            <input type="number" id="x1_limit" value="2" required><br><br>
-            <label for="x2_limit">Максимальна кількість зовнішньої фарби (x2): </label>
-            <input type="number" id="x2_limit" value="3" required><br><br>
+            <h3>Обмеження 1:</h3>
+            <label for="C1">x1 + x2 ≤ C1: </label>
+            <input type="number" id="C1" value="4" required><br><br>
+
+            <h3>Обмеження 2:</h3>
+            <label for="C2">x1 + x2 ≤ C2: </label>
+            <input type="number" id="C2" value="4" required><br><br>
+
+            <h3>Цільова функція:</h3>
+            <label for="Z">Max Z = x1 + x2</label><br><br>
+
             <button type="submit">Розв'язати задачу</button>
         </form>
+
         <div id="result"></div>
+
+        <!-- Місце для графіка -->
         <canvas id="chart"></canvas>
     </div>
 
     <script>
+        // Слухач події форми
         document.getElementById('form').addEventListener('submit', function(event) {
             event.preventDefault();
 
             // Отримуємо значення з форми
-            let C = parseFloat(document.getElementById('C').value);
-            let x1_limit = parseFloat(document.getElementById('x1_limit').value);
-            let x2_limit = parseFloat(document.getElementById('x2_limit').value);
+            let C1 = parseFloat(document.getElementById('C1').value);
+            let C2 = parseFloat(document.getElementById('C2').value);
 
-            // Математичне розв'язання методом Симплекса
-            let result = solveLinearProgram(C, x1_limit, x2_limit);
+            // Математичне розв'язання задачі
+            let result = solveLinearProgram(C1, C2);
 
             // Виведення результату
             document.getElementById('result').innerHTML = `
@@ -56,15 +66,14 @@
             `;
 
             // Побудова графіка
-            buildGraph(C, result.x1, result.x2);
+            buildGraph(C1, C2, result.x1, result.x2);
         });
 
         // Функція для вирішення задачі лінійного програмування
-        function solveLinearProgram(C, x1_limit, x2_limit) {
-            // Оптимізація за допомогою простої логіки (метод Симплекса реальний розв'язок потребує складних обчислень)
-            // Припустимо, що оптимальне рішення буде:
-            let x1 = Math.min(x1_limit, C - 1);  // Оптимальна кількість внутрішньої фарби
-            let x2 = C - x1;  // Залишок для зовнішньої фарби
+        function solveLinearProgram(C1, C2) {
+            // Враховуємо, що оптимальне рішення може залежати від обмежень
+            let x1 = Math.min(C1 - 1, C2 - 1);  // Оптимальна кількість внутрішньої фарби
+            let x2 = Math.min(C1 - x1, C2 - x1);  // Залишок для зовнішньої фарби
 
             // Прибуток: Z = x1 + x2
             let profit = x1 + x2;
@@ -73,7 +82,7 @@
         }
 
         // Функція для побудови графіка
-        function buildGraph(C, x1, x2) {
+        function buildGraph(C1, C2, x1, x2) {
             var ctx = document.getElementById('chart').getContext('2d');
             var chart = new Chart(ctx, {
                 type: 'scatter',
@@ -81,9 +90,9 @@
                     datasets: [{
                         label: 'Область допустимих розв\'язків',
                         data: [
-                            { x: 0, y: C },  // x1 = 0, x2 = C
-                            { x: C, y: 0 },  // x1 = C, x2 = 0
-                            { x: x1, y: x2 } // Оптимальний розв\'язок
+                            { x: 0, y: C1 },  // x1 = 0, x2 = C1
+                            { x: C1, y: 0 },  // x1 = C1, x2 = 0
+                            { x: x1, y: x2 }  // Оптимальний розв\'язок
                         ],
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
@@ -96,7 +105,7 @@
                     scales: {
                         x: {
                             min: 0,
-                            max: C,
+                            max: Math.max(C1, C2),
                             title: {
                                 display: true,
                                 text: 'x1 (внутрішня фарба)'
@@ -104,7 +113,7 @@
                         },
                         y: {
                             min: 0,
-                            max: C,
+                            max: Math.max(C1, C2),
                             title: {
                                 display: true,
                                 text: 'x2 (зовнішня фарба)'
@@ -117,3 +126,4 @@
     </script>
 </body>
 </html>
+
