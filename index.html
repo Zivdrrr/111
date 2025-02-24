@@ -108,48 +108,57 @@
             buildGraph(C1, C2, x1, x2);
         });
 
-        // Функція для побудови графіка
-        function buildGraph(C1, C2, x1, x2) {
-            var ctx = document.getElementById('chart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: 'Область допустимих розв\'язків',
-                        data: [
-                            { x: 0, y: C1 },  // x1 = 0, x2 = C1
-                            { x: C1, y: 0 },  // x1 = C1, x2 = 0
-                            { x: x1, y: x2 }  // Оптимальний розв\'язок
-                        ],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                        pointRadius: 5,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            min: 0,
-                            max: Math.max(C1, C2),
-                            title: {
-                                display: true,
-                                text: 'x1 (внутрішня фарба)'
-                            }
+       function buildGraph(C1, C2, x1, x2) {
+        var ctx = document.getElementById('chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Область допустимих розв\'язків',
+                    data: [
+                        { x: 0, y: C1 },  // x1 = 0, x2 = C1
+                        { x: C1, y: 0 },  // x1 = C1, x2 = 0
+                        { x: x1, y: x2 }  // Оптимальний розв\'язок
+                    ],
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Білий фон точок з прозорістю
+                    borderColor: 'rgba(255, 255, 255, 1)', // Білий колір меж точок
+                    borderWidth: 1,
+                    pointRadius: 5, // Розмір точок
+                    pointBackgroundColor: 'rgba(255, 255, 255, 1)', // Білий колір точок
+                    pointBorderColor: 'rgba(255, 255, 255, 1)', // Білий колір меж точок
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        min: 0,
+                        max: Math.max(C1, C2),
+                        title: {
+                            display: true,
+                            text: 'x1 (внутрішня фарба)',
+                            color: 'white' // Білий колір тексту для осі x
                         },
-                        y: {
-                            min: 0,
-                            max: Math.max(C1, C2),
-                            title: {
-                                display: true,
-                                text: 'x2 (зовнішня фарба)'
-                            }
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.5)' // Білий колір сітки осі x
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: Math.max(C1, C2),
+                        title: {
+                            display: true,
+                            text: 'x2 (зовнішня фарба)',
+                            color: 'white' // Білий колір тексту для осі y
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.5)' // Білий колір сітки осі y
                         }
                     }
                 }
-            });
-        }
-    </script>
+            }
+        });
+    }
+</script>
 </body>
 </html>
