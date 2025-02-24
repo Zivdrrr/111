@@ -18,24 +18,37 @@
             width: 70%;
             margin: 0 auto;
         }
+        input {
+            width: 150px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Задача лінійного програмування (Максимізація прибутку)</h1>
-        
-        <!-- Форма вводу -->
+
+        <!-- Форма вводу для обмежень -->
         <form id="form">
-            <h3>Обмеження 1:</h3>
-            <label for="C1">x1 + x2 ≤ C1: </label>
-            <input type="number" id="C1" value="4" required><br><br>
+            <div>
+                <h3>Обмеження 1:</h3>
+                <label for="C1">x1 + x2 ≤ C1: </label>
+                <input type="number" id="C1" placeholder="Введіть значення для C1" required><br><br>
+            </div>
+            
+            <div>
+                <h3>Обмеження 2:</h3>
+                <label for="C2">x1 + x2 ≤ C2: </label>
+                <input type="number" id="C2" placeholder="Введіть значення для C2" required><br><br>
+            </div>
 
-            <h3>Обмеження 2:</h3>
-            <label for="C2">x1 + x2 ≤ C2: </label>
-            <input type="number" id="C2" value="4" required><br><br>
-
-            <h3>Цільова функція:</h3>
-            <label for="Z">Max Z = x1 + x2</label><br><br>
+            <div>
+                <h3>Цільова функція:</h3>
+                <label for="Z">Max Z = x1 + x2: </label>
+                <input type="number" id="Z" placeholder="Введіть значення для Z" required><br><br>
+            </div>
 
             <button type="submit">Розв'язати задачу</button>
         </form>
@@ -54,6 +67,7 @@
             // Отримуємо значення з форми
             let C1 = parseFloat(document.getElementById('C1').value);
             let C2 = parseFloat(document.getElementById('C2').value);
+            let Z = parseFloat(document.getElementById('Z').value);
 
             // Математичне розв'язання задачі
             let result = solveLinearProgram(C1, C2);
@@ -126,4 +140,3 @@
     </script>
 </body>
 </html>
-
