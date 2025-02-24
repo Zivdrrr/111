@@ -55,7 +55,7 @@
             <div>
                 <h3>Цільова функція:</h3>
                 <label for="Z">Max Z = x1 + x2: </label>
-                <input type="number" id="Z" placeholder="Введіть значення для Z" disabled><br><br>
+                <input type="number" id="Z" placeholder="Введіть значення для Z" required><br><br>
             </div>
 
             <button type="submit">Розв'язати задачу</button>
@@ -81,21 +81,18 @@
             let x2_2 = parseFloat(document.getElementById('x2_2').value);
             let C2 = parseFloat(document.getElementById('C2').value);
 
+            // Отримуємо значення цільової функції вручну
+            let Z = parseFloat(document.getElementById('Z').value);
+
             // Математичне розв'язання задачі
             let result = solveLinearProgram(C1, C2);
-
-            // Обчислюємо значення цільової функції Max Z = x1 + x2
-            let maxZ = result.x1 + result.x2;
 
             // Виведення результату
             document.getElementById('result').innerHTML = `
                 Оптимальна кількість внутрішньої фарби (x1): ${result.x1} тонн<br>
                 Оптимальна кількість зовнішньої фарби (x2): ${result.x2} тонн<br>
-                Максимальний прибуток (Max Z): ${maxZ} одиниць
+                Максимальний прибуток (Max Z): ${Z} одиниць
             `;
-
-            // Оновлення значення цільової функції
-            document.getElementById('Z').value = maxZ;
 
             // Побудова графіка
             buildGraph(C1, C2, result.x1, result.x2);
@@ -107,7 +104,6 @@
             let x1 = Math.min(C1 - 1, C2 - 1);  // Оптимальна кількість внутрішньої фарби
             let x2 = Math.min(C1 - x1, C2 - x1);  // Залишок для зовнішньої фарби
 
-            // Прибуток: Z = x1 + x2
             return { x1, x2 };
         }
 
@@ -156,4 +152,3 @@
     </script>
 </body>
 </html>
-
