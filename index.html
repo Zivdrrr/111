@@ -138,6 +138,7 @@
                             borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
                             borderWidth: 2,
                             fill: false, // Не заповнюємо область
+                            tension: 0.1 // Для гладких ліній
                         },
                         // Лінія для обмеження 2 (x1 + x2 = C2)
                         {
@@ -149,6 +150,7 @@
                             borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
                             borderWidth: 2,
                             fill: false, // Не заповнюємо область
+                            tension: 0.1 // Для гладких ліній
                         }
                     ]
                 },
@@ -157,7 +159,7 @@
                     scales: {
                         x: {
                             min: 0,
-                            max: Math.max(C1, C2),
+                            max: Math.max(C1, C2, x1),
                             title: {
                                 display: true,
                                 text: 'x1 (внутрішня фарба)',
@@ -169,7 +171,7 @@
                         },
                         y: {
                             min: 0,
-                            max: Math.max(C1, C2),
+                            max: Math.max(C1, C2, x2),
                             title: {
                                 display: true,
                                 text: 'x2 (зовнішня фарба)',
@@ -186,5 +188,4 @@
     </script>
 </body>
 </html>
-
 
