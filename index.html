@@ -95,11 +95,11 @@
             let maxZ = x1 + x2;
 
             // Виведення результату
-            document.getElementById('result').innerHTML = 
+            document.getElementById('result').innerHTML = `
                 Оптимальна кількість внутрішньої фарби (x1): ${x1} тонн<br>
                 Оптимальна кількість зовнішньої фарби (x2): ${x2} тонн<br>
                 Максимальний прибуток (Max Z): ${maxZ} одиниць
-            ;
+            `;
 
             // Оновлення значення цільової функції
             document.getElementById('Z').value = maxZ;
@@ -108,82 +108,83 @@
             buildGraph(C1, C2, x1, x2);
         });
 
-       function buildGraph(C1, C2, x1, x2) {
-    var ctx = document.getElementById('chart').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'scatter',
-        data: {
-            datasets: [
-                {
-                    label: 'Область допустимих розв\'язків',
-                    data: [
-                        { x: 0, y: C1 },  // x1 = 0, x2 = C1
-                        { x: C1, y: 0 },  // x1 = C1, x2 = 0
-                        { x: x1, y: x2 }  // Оптимальний розв\'язок
-                    ],
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Білий фон точок з прозорістю
-                    borderColor: 'rgba(255, 255, 255, 1)', // Білий колір меж точок
-                    borderWidth: 1,
-                    pointRadius: 5, // Розмір точок
-                    pointBackgroundColor: 'rgba(255, 255, 255, 1)', // Білий колір точок
-                    pointBorderColor: 'rgba(255, 255, 255, 1)', // Білий колір меж точок
+        function buildGraph(C1, C2, x1, x2) {
+            var ctx = document.getElementById('chart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Область допустимих розв\'язків',
+                            data: [
+                                { x: 0, y: C1 },  // x1 = 0, x2 = C1
+                                { x: C1, y: 0 },  // x1 = C1, x2 = 0
+                                { x: x1, y: x2 }  // Оптимальний розв\'язок
+                            ],
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Білий фон точок з прозорістю
+                            borderColor: 'rgba(255, 255, 255, 1)', // Білий колір меж точок
+                            borderWidth: 1,
+                            pointRadius: 5, // Розмір точок
+                            pointBackgroundColor: 'rgba(255, 255, 255, 1)', // Білий колір точок
+                            pointBorderColor: 'rgba(255, 255, 255, 1)', // Білий колір меж точок
+                        },
+                        // Лінія для обмеження 1 (x1 + x2 = C1)
+                        {
+                            label: 'Обмеження 1: x1 + x2 = C1',
+                            data: [
+                                { x: 0, y: C1 },
+                                { x: C1, y: 0 }
+                            ],
+                            borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
+                            borderWidth: 2,
+                            fill: false, // Не заповнюємо область
+                        },
+                        // Лінія для обмеження 2 (x1 + x2 = C2)
+                        {
+                            label: 'Обмеження 2: x1 + x2 = C2',
+                            data: [
+                                { x: 0, y: C2 },
+                                { x: C2, y: 0 }
+                            ],
+                            borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
+                            borderWidth: 2,
+                            fill: false, // Не заповнюємо область
+                        }
+                    ]
                 },
-                // Лінія для обмеження 1 (x1 + x2 = C1)
-                {
-                    label: 'Обмеження 1: x1 + x2 = C1',
-                    data: [
-                        { x: 0, y: C1 },
-                        { x: C1, y: 0 }
-                    ],
-                    borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
-                    borderWidth: 2,
-                    fill: false, // Не заповнюємо область
-                },
-                // Лінія для обмеження 2 (x1 + x2 = C2)
-                {
-                    label: 'Обмеження 2: x1 + x2 = C2',
-                    data: [
-                        { x: 0, y: C2 },
-                        { x: C2, y: 0 }
-                    ],
-                    borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
-                    borderWidth: 2,
-                    fill: false, // Не заповнюємо область
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    min: 0,
-                    max: Math.max(C1, C2),
-                    title: {
-                        display: true,
-                        text: 'x1 (внутрішня фарба)',
-                        color: 'white' // Білий колір тексту для осі x
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.5)' // Білий колір сітки осі x
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            min: 0,
+                            max: Math.max(C1, C2),
+                            title: {
+                                display: true,
+                                text: 'x1 (внутрішня фарба)',
+                                color: 'white' // Білий колір тексту для осі x
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.5)' // Білий колір сітки осі x
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: Math.max(C1, C2),
+                            title: {
+                                display: true,
+                                text: 'x2 (зовнішня фарба)',
+                                color: 'white' // Білий колір тексту для осі y
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.5)' // Білий колір сітки осі y
+                            }
+                        }
                     }
-                },
-                y: {
-                    min: 0,
-                    max: Math.max(C1, C2),
-                    title: {
-                        display: true,
-                        text: 'x2 (зовнішня фарба)',
-                        color: 'white' // Білий колір тексту для осі y
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.5)' // Білий колір сітки осі y
-                    }
                 }
-            }
+            });
         }
-    });
-}
-</script>
+    </script>
 </body>
 </html>
+
 
