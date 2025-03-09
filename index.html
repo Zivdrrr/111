@@ -1,4 +1,114 @@
-function buildGraph(C1, C2, x1, x2) {
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лінійне програмування (Метод Симплекса)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #003366;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 30px;
+            color: white;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+        .container {
+            width: 70%;
+            margin: 0 auto;
+        }
+        input {
+            width: 150px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Задача лінійного програмування (Максимізація прибутку)</h1>
+
+        <!-- Форма вводу для обмежень -->
+        <form id="form">
+            <div>
+                <h3>Обмеження 1 (x1 + x2 ≤ C1):</h3>
+                <label for="x1_1">x1: </label>
+                <input type="number" id="x1_1" placeholder="Введіть x1" required><br><br>
+                <label for="x2_1">x2: </label>
+                <input type="number" id="x2_1" placeholder="Введіть x2" required><br><br>
+                <label for="C1">C1: </label>
+                <input type="number" id="C1" placeholder="Введіть C1" required><br><br>
+            </div>
+
+            <div>
+                <h3>Обмеження 2 (x1 + x2 ≤ C2):</h3>
+                <label for="x1_2">x1: </label>
+                <input type="number" id="x1_2" placeholder="Введіть x1" required><br><br>
+                <label for="x2_2">x2: </label>
+                <input type="number" id="x2_2" placeholder="Введіть x2" required><br><br>
+                <label for="C2">C2: </label>
+                <input type="number" id="C2" placeholder="Введіть C2" required><br><br>
+            </div>
+
+            <div>
+                <h3>Цільова функція (Max Z):</h3>
+                <label for="x1">x1: </label>
+                <input type="number" id="x1" placeholder="Введіть x1" required><br><br>
+                <label for="x2">x2: </label>
+                <input type="number" id="x2" placeholder="Введіть x2" required><br><br>
+                <label for="Z">Max Z = x1 + x2: </label>
+                <input type="number" id="Z" placeholder="Введіть значення для Z" disabled><br><br>
+            </div>
+
+            <button type="submit">Розв'язати задачу</button>
+        </form>
+
+        <div id="result"></div>
+
+        <!-- Місце для графіка -->
+        <canvas id="chart"></canvas>
+    </div>
+
+    <script>
+        // Слухач події форми
+        document.getElementById('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Отримуємо значення з форми
+            let x1_1 = parseFloat(document.getElementById('x1_1').value);
+            let x2_1 = parseFloat(document.getElementById('x2_1').value);
+            let C1 = parseFloat(document.getElementById('C1').value);
+
+            let x1_2 = parseFloat(document.getElementById('x1_2').value);
+            let x2_2 = parseFloat(document.getElementById('x2_2').value);
+            let C2 = parseFloat(document.getElementById('C2').value);
+
+            // Отримуємо значення x1 і x2 вручну
+            let x1 = parseFloat(document.getElementById('x1').value);
+            let x2 = parseFloat(document.getElementById('x2').value);
+
+            // Обчислюємо значення цільової функції Max Z = x1 + x2
+            let maxZ = x1 + x2;
+
+            // Виведення результату
+            document.getElementById('result').innerHTML = 
+                Оптимальна кількість внутрішньої фарби (x1): ${x1} тонн<br>
+                Оптимальна кількість зовнішньої фарби (x2): ${x2} тонн<br>
+                Максимальний прибуток (Max Z): ${maxZ} одиниць
+            ;
+
+            // Оновлення значення цільової функції
+            document.getElementById('Z').value = maxZ;
+
+            // Побудова графіка
+            buildGraph(C1, C2, x1, x2);
+        });
+
+       function buildGraph(C1, C2, x1, x2) {
     var ctx = document.getElementById('chart').getContext('2d');
     var chart = new Chart(ctx, {
         type: 'scatter',
@@ -73,5 +183,7 @@ function buildGraph(C1, C2, x1, x2) {
         }
     });
 }
-
+</script>
+</body>
+</html> У мене є код і чомусь не видно лінії графіку? 
 
