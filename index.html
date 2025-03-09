@@ -115,6 +115,17 @@
                 data: {
                     datasets: [
                         {
+                            label: 'Лінія під кутом 45 градусів (y = x)',
+                            data: [
+                                { x: 0, y: 0 },   // Початкова точка
+                                { x: Math.max(C1, C2, x1), y: Math.max(C1, C2, x1) }  // Кінець лінії
+                            ],
+                            borderColor: 'rgba(75, 192, 192, 1)', // Колір лінії (блакитний)
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0, // Без згладжування
+                        },
+                        {
                             label: 'Обмеження 1: x1 + x2 = 10',
                             data: [
                                 { x: 0, y: C1 },
@@ -135,14 +146,6 @@
                             borderWidth: 2,
                             fill: false,
                             tension: 0 // Лінія без згладжування
-                        },
-                        {
-                            label: 'Оптимальний розв\'язок',
-                            data: [
-                                { x: x1, y: x2 }
-                            ],
-                            backgroundColor: 'rgba(255, 159, 64, 1)', // Колір точки оптимального розв\'язку
-                            pointRadius: 5
                         }
                     ]
                 },
