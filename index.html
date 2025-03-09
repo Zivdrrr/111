@@ -35,23 +35,23 @@
         <!-- Форма вводу для обмежень -->
         <form id="form">
             <div>
-                <h3>Обмеження 1 (x1 + x2 ≤ C1):</h3>
+                <h3>Обмеження 1 (x1 + x2 ≤ 10):</h3>
                 <label for="x1_1">x1: </label>
-                <input type="number" id="x1_1" placeholder="Введіть x1" required><br><br>
+                <input type="number" id="x1_1" value="1" required><br><br>
                 <label for="x2_1">x2: </label>
-                <input type="number" id="x2_1" placeholder="Введіть x2" required><br><br>
+                <input type="number" id="x2_1" value="1" required><br><br>
                 <label for="C1">C1: </label>
-                <input type="number" id="C1" placeholder="Введіть C1" required><br><br>
+                <input type="number" id="C1" value="10" required><br><br>
             </div>
 
             <div>
-                <h3>Обмеження 2 (x1 + x2 ≤ C2):</h3>
+                <h3>Обмеження 2 (x1 + x2 ≤ 12):</h3>
                 <label for="x1_2">x1: </label>
-                <input type="number" id="x1_2" placeholder="Введіть x1" required><br><br>
+                <input type="number" id="x1_2" value="1" required><br><br>
                 <label for="x2_2">x2: </label>
-                <input type="number" id="x2_2" placeholder="Введіть x2" required><br><br>
+                <input type="number" id="x2_2" value="1" required><br><br>
                 <label for="C2">C2: </label>
-                <input type="number" id="C2" placeholder="Введіть C2" required><br><br>
+                <input type="number" id="C2" value="12" required><br><br>
             </div>
 
             <div>
@@ -115,7 +115,7 @@
                 data: {
                     datasets: [
                         {
-                            label: 'Обмеження 1: x1 + x2 = C1',
+                            label: 'Обмеження 1: x1 + x2 = 10',
                             data: [
                                 { x: 0, y: C1 },
                                 { x: C1, y: 0 }
@@ -126,7 +126,7 @@
                             tension: 0 // Лінія без згладжування
                         },
                         {
-                            label: 'Обмеження 2: x1 + x2 = C2',
+                            label: 'Обмеження 2: x1 + x2 = 12',
                             data: [
                                 { x: 0, y: C2 },
                                 { x: C2, y: 0 }
