@@ -111,20 +111,9 @@
         function buildGraph(C1, C2, x1, x2) {
             var ctx = document.getElementById('chart').getContext('2d');
             var chart = new Chart(ctx, {
-                type: 'scatter',
+                type: 'scatter', // Точки з лініями
                 data: {
                     datasets: [
-                        {
-                            label: 'Лінія під кутом 45 градусів (y = x)',
-                            data: [
-                                { x: 0, y: 0 },   // Початкова точка
-                                { x: Math.max(C1, C2, x1), y: Math.max(C1, C2, x1) }  // Кінець лінії
-                            ],
-                            borderColor: 'rgba(75, 192, 192, 1)', // Колір лінії (блакитний)
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0, // Без згладжування
-                        },
                         {
                             label: 'Обмеження 1: x1 + x2 = 10',
                             data: [
@@ -133,8 +122,9 @@
                             ],
                             borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
                             borderWidth: 2,
-                            fill: false,
-                            tension: 0 // Лінія без згладжування
+                            fill: false,  // Без заповнення
+                            tension: 0, // Без згладжування
+                            showLine: true
                         },
                         {
                             label: 'Обмеження 2: x1 + x2 = 12',
@@ -144,8 +134,32 @@
                             ],
                             borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
                             borderWidth: 2,
-                            fill: false,
-                            tension: 0 // Лінія без згладжування
+                            fill: false,  // Без заповнення
+                            tension: 0, // Без згладжування
+                            showLine: true
+                        },
+                        {
+                            label: 'Лінія під кутом 45 градусів (y = x)',
+                            data: [
+                                { x: 0, y: 0 },
+                                { x: Math.max(C1, C2, x1), y: Math.max(C1, C2, x1) }
+                            ],
+                            borderColor: 'rgba(75, 192, 192, 1)', // Блакитний колір лінії
+                            borderWidth: 2,
+                            fill: false,  // Без заповнення
+                            tension: 0, // Без згладжування
+                            showLine: true
+                        },
+                        {
+                            label: 'Оптимальний розв\'язок (x1, x2)',
+                            data: [
+                                { x: x1, y: x2 }
+                            ],
+                            backgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий колір для точки
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 2,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий
                         }
                     ]
                 },
