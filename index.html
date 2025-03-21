@@ -76,43 +76,63 @@
     <script>
         var chart; // Глобальна змінна для графіка
 
-        // Функція для ініціалізації графіка
-        function initChart() {
-            var ctx = document.getElementById('chart').getContext('2d');
-            chart = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: []
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            min: 0,
-                            max: 10,
-                            title: {
-                                display: true,
-                                text: 'x1 (внутрішня фарба)',
-                                color: 'white'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.5)'
-                            }
-                        },
-                        y: {
-                            min: 0,
-                            max: 10,
-                            title: {
-                                display: true,
-                                text: 'x2 (зовнішня фарба)',
-                                color: 'white'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.5)'
-                            }
-                        }
-                    }
-                }
+        // Оновлення графіка з автоматичними межами
+function updateGraph(C1, C2, x1, x2) {
+    // Очищення старих даних
+    chart.data.datasets = [];
+
+    // Визначення максимальних значень для осей
+    let maxX = Math.max(C1, C2, x1);
+    let maxY = Math.max(C1, C2, x2);
+
+    // Задаємо нові межі для осей
+    chart.options.scales.x.max = maxX + 10;  // Додаємо трохи простору
+    chart.options.scales.y.max = maxY + 10;  // Додаємо трохи простору
+
+    // Додавання нових ліній і точок
+    chart.data.datasets.push({
+        label: 'Обмеження 1: x1 + x2 = C1',
+        data: [
+            { x: 0, y: C1 },
+            { x: C1, y: 0 }
+        ],
+        borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
+        borderWidth: 2,
+        fill: false,  // Без заповнення
+        tension: 0, // Без згладжування
+        showLine: true
+    });
+
+    chart.data.datasets.push({
+        label: 'Обмеження 2: x1 + x2 = C2',
+        data: [
+            { x: 0, y: C2 },
+            { x: C2, y: 0 }
+        ],
+        borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
+        borderWidth: 2,
+        fill: false,  // Без заповнення
+        tension: 0, // Без згладжування
+        showLine: true
+    });
+
+    chart.data.datasets.push({
+        label: 'Оптимальний розв\'язок (x1, x2)',
+        data: [
+            { x: x1, y: x2 }
+        ],
+        backgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий колір для точки
+        borderColor: 'rgba(255, 159, 64, 1)',
+        borderWidth: 2,
+        pointRadius: 5,
+        pointBackgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий
+    });
+
+    // Оновлення графіка
+    chart.update();
+}
+
+
             });
         }
 
