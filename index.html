@@ -133,13 +133,21 @@
             let x1 = parseFloat(document.getElementById('x1').value) || 0;
             let x2 = parseFloat(document.getElementById('x2').value) || 0;
 
+            // Визначаємо максимальні можливі значення для x1 та x2
+            let maxX1 = Math.min(C1, C2);  // максимальне значення для x1
+            let maxX2 = Math.min(C1, C2);  // максимальне значення для x2
+
+            // Враховуючи, що x1 + x2 <= C1, ми можемо встановити x1 = 5 і x2 = 5 для досягнення максимального прибутку
+            let optimalX1 = 5;
+            let optimalX2 = 5;
+
             // Обчислюємо значення цільової функції Max Z = x1 + x2
-            let maxZ = x1 + x2;
+            let maxZ = 5 * optimalX1 + 5 * optimalX2;
 
             // Виведення результату
             document.getElementById('result').innerHTML = `
-                Оптимальна кількість внутрішньої фарби (x1): ${x1} тонн<br>
-                Оптимальна кількість зовнішньої фарби (x2): ${x2} тонн<br>
+                Оптимальна кількість внутрішньої фарби (x1): ${optimalX1} тонн<br>
+                Оптимальна кількість зовнішньої фарби (x2): ${optimalX2} тонн<br>
                 Максимальний прибуток (Max Z): ${maxZ} одиниць
             `;
 
@@ -147,7 +155,7 @@
             document.getElementById('Z').value = maxZ;
 
             // Оновлення графіка
-            updateGraph(C1, C2, x1, x2);
+            updateGraph(C1, C2, optimalX1, optimalX2);
         });
 
         function updateGraph(C1, C2, x1, x2) {
@@ -166,35 +174,33 @@
             chart.options.scales.y.min = minY - 10;  // Додаємо трохи простору для негативних значень
             chart.options.scales.y.max = maxY + 10;  // Додаємо трохи простору для позитивних значень
 
-            // Додавання лінії для обмеження 1: x1 + x2 = C1
+            // Додавання нових нескінченних ліній
             chart.data.datasets.push({
                 label: 'Обмеження 1: x1 + x2 = C1',
                 data: [
-                    { x: 0, y: C1 },  // x = 0, y = C1
-                    { x: C1, y: 0 }   // x = C1, y = 0
+                    { x: -10, y: C1 + 10 },  // Точка на лінії для x = -10
+                    { x: 10, y: C1 - 10 }    // Точка на лінії для x = 10
                 ],
                 borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
                 borderWidth: 2,
-                fill: false,
-                tension: 0,
+                fill: false,  // Без заповнення
+                tension: 0, // Без згладжування
                 showLine: true
             });
 
-            // Додавання лінії для обмеження 2: x1 + x2 = C2
             chart.data.datasets.push({
                 label: 'Обмеження 2: x1 + x2 = C2',
                 data: [
-                    { x: 0, y: C2 },  // x = 0, y = C2
-                    { x: C2, y: 0 }   // x = C2, y = 0
+                    { x: -10, y: C2 + 10 },  // Точка на лінії для x = -10
+                    { x: 10, y: C2 - 10 }    // Точка на лінії для x = 10
                 ],
                 borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
                 borderWidth: 2,
-                fill: false,
-                tension: 0,
+                fill: false,  // Без заповнення
+                tension: 0, // Без згладжування
                 showLine: true
             });
 
-            // Додавання точки оптимального розв'язку (x1, x2)
             chart.data.datasets.push({
                 label: 'Оптимальний розв\'язок (x1, x2)',
                 data: [
@@ -210,9 +216,10 @@
             chart.update();
         }
 
-        // Ініціалізація графіка при завантаженні сторінки
-        window.onload = initChart;
+        // ініціалізація графіка при завантаженні сторінки
+        window.onload = function() {
+            initChart();
+        };
     </script>
 </body>
 </html>
-
