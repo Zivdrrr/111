@@ -88,8 +88,8 @@
                     responsive: true,
                     scales: {
                         x: {
-                            min: 0,
-                            max: 10,  // Початкове максимальне значення для осі x
+                            min: -10,  // Мінімум для осі X, щоб підтримувати негативні значення
+                            max: 10,   // Максимум для осі X
                             title: {
                                 display: true,
                                 text: 'x1 (внутрішня фарба)',
@@ -100,8 +100,8 @@
                             }
                         },
                         y: {
-                            min: 0,
-                            max: 10,  // Початкове максимальне значення для осі y
+                            min: -10,  // Мінімум для осі Y, щоб підтримувати негативні значення
+                            max: 10,   // Максимум для осі Y
                             title: {
                                 display: true,
                                 text: 'x2 (зовнішня фарба)',
@@ -157,10 +157,14 @@
             // Визначення максимальних значень для осей
             let maxX = Math.max(C1, C2, x1);
             let maxY = Math.max(C1, C2, x2);
+            let minX = Math.min(C1, C2, x1);
+            let minY = Math.min(C1, C2, x2);
 
-            // Задаємо нові межі для осей
-            chart.options.scales.x.max = maxX + 10;  // Додаємо трохи простору
-            chart.options.scales.y.max = maxY + 10;  // Додаємо трохи простору
+            // Оновлення меж для осей
+            chart.options.scales.x.min = minX - 10;  // Додаємо трохи простору для негативних значень
+            chart.options.scales.x.max = maxX + 10;  // Додаємо трохи простору для позитивних значень
+            chart.options.scales.y.min = minY - 10;  // Додаємо трохи простору для негативних значень
+            chart.options.scales.y.max = maxY + 10;  // Додаємо трохи простору для позитивних значень
 
             // Додавання нових ліній і точок
             chart.data.datasets.push({
@@ -199,22 +203,4 @@
                 borderWidth: 2,
                 pointRadius: 5,
                 pointBackgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий
-            });
 
-            // Оновлення графіка
-            chart.update();
-        }
-
-        // Ініціалізація графіка при завантаженні сторінки
-        window.onload = initChart;
-
-        // Додано слухач для натискання Enter на полях введення
-        document.getElementById('form').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Забороняє стандартну дію при натисканні Enter
-                document.querySelector('button[type="submit"]').click(); // Імітує натискання кнопки
-            }
-        });
-    </script>
-</body>
-</html>
