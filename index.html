@@ -116,6 +116,78 @@
             });
         }
 
+        // Функція для симплекс-методу
+        function simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
+            // Цільова функція: Max Z = c1 * x1 + c2 * x2
+            let c = [c1, c2]; // коефіцієнти цільової функції
+            let constraints = [
+                [x1_1, x2_1, C1],  // Обмеження 1: x1 + x2 <= C1
+                [x1_2, x2_2, C2]   // Обмеження 2: x1 + x2 <= C2
+            ];
+
+            // Симплекс-метод (як приклад для 2 змінних і 2 обмежень)
+            let tableau = [
+                [x1_1, x2_1, 1, 0, C1],   // Обмеження 1
+                [x1_2, x2_2, 0, 1, C2],   // Обмеження 2
+                [-c1, -c2, 0, 0, 0]       // Цільова функція (мінус для максимізації)
+            ];
+
+            // Виконання симплекс-методу
+            let z = 0;
+            let iterations = 0;
+            while (true) {
+                let pivotColumn = -1;
+                let pivotRow = -1;
+                // Пошук стовпця з найбільшим негативним значенням в останньому рядку
+                for (let j = 0; j < tableau[2].length - 1; j++) {
+                    if (tableau[2][j] < 0) {
+                        pivotColumn = j;
+                        break;
+                    }
+                }
+
+                // Якщо немає негативних значень, то ми знайшли оптимальне рішення
+                if (pivotColumn === -1) break;
+
+                // Пошук рядка з мінімальним відношенням
+                let minRatio = Infinity;
+                for (let i = 0; i < tableau.length - 1; i++) {
+                    if (tableau[i][pivotColumn] > 0) {
+                        let ratio = tableau[i][tableau[i].length - 1] / tableau[i][pivotColumn];
+                        if (ratio < minRatio) {
+                            minRatio = ratio;
+                            pivotRow = i;
+                        }
+                    }
+                }
+
+                // Обчислення нового півтора
+                let pivot = tableau[pivotRow][pivotColumn];
+                for (let j = 0; j < tableau[pivotRow].length; j++) {
+                    tableau[pivotRow][j] /= pivot;
+                }
+
+                // Зміна інших рядків
+                for (let i = 0; i < tableau.length; i++) {
+                    if (i !== pivotRow) {
+                        let factor = tableau[i][pivotColumn];
+                        for (let j = 0; j < tableau[i].length; j++) {
+                            tableau[i][j] -= factor * tableau[pivotRow][j];
+                        }
+                    }
+                }
+
+                iterations++;
+            }
+
+            // Результат
+            let optimalX1 = tableau[0][tableau[0].length - 1];
+            let optimalX2 = tableau[1][tableau[1].length - 1];
+            z = -tableau[2][tableau[2].length - 1];
+
+            return { optimalX1, optimalX2, z };
+        }
+
         // Слухач події форми
         document.getElementById('form').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -129,30 +201,22 @@
             let x2_2 = parseFloat(document.getElementById('x2_2').value) || 0;
             let C2 = parseFloat(document.getElementById('C2').value) || 0;
 
-            // Отримуємо значення x1 і x2 вручну
-            let x1 = parseFloat(document.getElementById('x1').value) || 0;
-            let x2 = parseFloat(document.getElementById('x2').value) || 0;
+            // Отримуємо значення цільової функції вручну
+            let c1 = parseFloat(document.getElementById('x1').value) || 0;
+            let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
-            // Визначаємо максимальні можливі значення для x1 та x2
-            let maxX1 = Math.min(C1, C2);  // максимальне значення для x1
-            let maxX2 = Math.min(C1, C2);  // максимальне значення для x2
-
-            // Враховуючи, що x1 + x2 <= C1, ми можемо встановити x1 = 5 і x2 = 5 для досягнення максимального прибутку
-            let optimalX1 = 5;
-            let optimalX2 = 5;
-
-            // Обчислюємо значення цільової функції Max Z = x1 + x2
-            let maxZ = 5 * optimalX1 + 5 * optimalX2;
+            // Виконання симплекс-методу
+            let { optimalX1, optimalX2, z } = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
 
             // Виведення результату
             document.getElementById('result').innerHTML = `
                 Оптимальна кількість внутрішньої фарби (x1): ${optimalX1} тонн<br>
                 Оптимальна кількість зовнішньої фарби (x2): ${optimalX2} тонн<br>
-                Максимальний прибуток (Max Z): ${maxZ} одиниць
+                Максимальний прибуток (Max Z): ${z} одиниць
             `;
 
             // Оновлення значення цільової функції
-            document.getElementById('Z').value = maxZ;
+            document.getElementById('Z').value = z;
 
             // Оновлення графіка
             updateGraph(C1, C2, optimalX1, optimalX2);
@@ -230,4 +294,3 @@
     </script>
 </body>
 </html>
-
