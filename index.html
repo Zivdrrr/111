@@ -132,6 +132,9 @@
                 [-c1, -c2, 0, 0, 0]       // Цільова функція (мінус для максимізації)
             ];
 
+            console.log("Початкове таблице:");
+            console.table(tableau);
+
             // Виконання симплекс-методу
             let z = 0;
             let iterations = 0;
@@ -145,6 +148,8 @@
                         break;
                     }
                 }
+
+                console.log("Стовпець для повороту: ", pivotColumn);
 
                 // Якщо немає негативних значень, то ми знайшли оптимальне рішення
                 if (pivotColumn === -1) break;
@@ -160,6 +165,8 @@
                         }
                     }
                 }
+
+                console.log("Рядок для повороту: ", pivotRow);
 
                 // Обчислення нового півтора
                 let pivot = tableau[pivotRow][pivotColumn];
@@ -179,6 +186,9 @@
 
                 iterations++;
             }
+
+            console.log("Таблиця після обчислень:");
+            console.table(tableau);
 
             // Результат
             let optimalX1 = tableau[0][tableau[0].length - 1];
@@ -209,7 +219,6 @@
             let { optimalX1, optimalX2, z } = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
 
             // Виведення результату
-            // Якщо Z негативне, ми відображаємо його як 0
             document.getElementById('result').innerHTML = `
                 Оптимальна кількість внутрішньої фарби (x1): ${optimalX1} тонн<br>
                 Оптимальна кількість зовнішньої фарби (x2): ${optimalX2} тонн<br>
@@ -295,3 +304,4 @@
     </script>
 </body>
 </html>
+
