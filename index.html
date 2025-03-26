@@ -116,7 +116,7 @@
             });
         }
 
-        // Функція для симплекс-методу
+        // Оновлений симплекс-метод
         function simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
             // Цільова функція: Max Z = c1 * x1 + c2 * x2
             let c = [c1, c2]; // коефіцієнти цільової функції
@@ -183,7 +183,7 @@
             // Результат
             let optimalX1 = tableau[0][tableau[0].length - 1];
             let optimalX2 = tableau[1][tableau[1].length - 1];
-            z = -tableau[2][tableau[2].length - 1];
+            z = -tableau[2][tableau[2].length - 1]; // Переведення для максимізації
 
             return { optimalX1, optimalX2, z };
         }
@@ -201,96 +201,36 @@
             let x2_2 = parseFloat(document.getElementById('x2_2').value) || 0;
             let C2 = parseFloat(document.getElementById('C2').value) || 0;
 
-            // Отримуємо значення цільової функції вручну
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
-            // Виконання симплекс-методу
-            let { optimalX1, optimalX2, z } = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
+            // Викликаємо симплекс-метод
+            let result = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
 
-            // Виведення результату
+            // Виводимо результат
             document.getElementById('result').innerHTML = `
-                Оптимальна кількість внутрішньої фарби (x1): ${optimalX1} тонн<br>
-                Оптимальна кількість зовнішньої фарби (x2): ${optimalX2} тонн<br>
-                Максимальний прибуток (Max Z): ${z} одиниць
+                Оптимальні значення: <br>
+                x1 = ${result.optimalX1.toFixed(2)}, x2 = ${result.optimalX2.toFixed(2)}<br>
+                Максимальний прибуток: Z = ${result.z.toFixed(2)}
             `;
 
-            // Оновлення значення цільової функції
-            document.getElementById('Z').value = z;
-
-            // Оновлення графіка
-            updateGraph(C1, C2, optimalX1, optimalX2);
+            // Оновлюємо графік
+            chart.data.datasets = [{
+                label: 'Оптимальні точки',
+                data: [{
+                    x: result.optimalX1,
+                    y: result.optimalX2
+                }],
+                backgroundColor: 'rgba(0, 255, 0, 0.8)',
+                borderColor: 'green',
+                borderWidth: 2
+            }];
+            chart.update();
         });
 
-        function updateGraph(C1, C2, x1, x2) {
-            // Очищення старих даних
-            chart.data.datasets = [];
-
-            // Визначення координат точок для обмежень
-            // Обмеження 1: x1 + x2 <= C1 (перетин лінії)
-            let x1_1_start = 0;
-            let x2_1_start = C1; // коли x1 = 0, x2 = C1
-            let x1_1_end = C1;
-            let x2_1_end = 0; // коли x1 = C1, x2 = 0
-
-            // Обмеження 2: x1 + x2 <= C2
-            let x1_2_start = 0;
-            let x2_2_start = C2; // коли x1 = 0, x2 = C2
-            let x1_2_end = C2;
-            let x2_2_end = 0; // коли x1 = C2, x2 = 0
-
-            // Оновлення меж для осей
-            chart.options.scales.x.min = 0;
-            chart.options.scales.x.max = Math.max(C1, C2) + 10;
-            chart.options.scales.y.min = 0;
-            chart.options.scales.y.max = Math.max(C1, C2) + 10;
-
-            // Додавання нових нескінченних ліній
-            chart.data.datasets.push({
-                label: 'Обмеження 1: x1 + x2 = C1',
-                data: [
-                    { x: x1_1_start, y: x2_1_start },
-                    { x: x1_1_end, y: x2_1_end }
-                ],
-                borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
-                borderWidth: 2,
-                fill: false,  // Без заповнення
-                tension: 0, // Без згладжування
-                showLine: true
-            });
-
-            chart.data.datasets.push({
-                label: 'Обмеження 2: x1 + x2 = C2',
-                data: [
-                    { x: x1_2_start, y: x2_2_start },
-                    { x: x1_2_end, y: x2_2_end }
-                ],
-                borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
-                borderWidth: 2,
-                fill: false,  // Без заповнення
-                tension: 0, // Без згладжування
-                showLine: true
-            });
-
-            chart.data.datasets.push({
-                label: 'Оптимальний розв\'язок (x1, x2)',
-                data: [
-                    { x: x1, y: x2 }
-                ],
-                backgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий колір для точки
-                borderColor: 'rgba(255, 159, 64, 1)',
-                borderWidth: 2,
-                pointRadius: 5,
-                pointBackgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий
-            });
-
-            chart.update();
-        }
-
-        // ініціалізація графіка при завантаженні сторінки
-        window.onload = function() {
-            initChart();
-        };
+        // Ініціалізуємо графік
+        initChart();
     </script>
 </body>
 </html>
+
