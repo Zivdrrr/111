@@ -183,7 +183,7 @@
             // Результат
             let optimalX1 = tableau[0][tableau[0].length - 1];
             let optimalX2 = tableau[1][tableau[1].length - 1];
-            z = -tableau[2][tableau[2].length - 1];  // Оскільки ми мінімізуємо, результат буде позитивним
+            z = tableau[2][tableau[2].length - 1];  // Оскільки ми використовуємо мінус для максимізації, результат буде позитивним
 
             return { optimalX1, optimalX2, z };
         }
