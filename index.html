@@ -56,12 +56,10 @@
 
             <div>
                 <h3>Цільова функція (Max Z):</h3>
-                <label for="x1">x1: </label>
-                <input type="number" id="x1" placeholder="Введіть x1" required><br><br>
-                <label for="x2">x2: </label>
-                <input type="number" id="x2" placeholder="Введіть x2" required><br><br>
-                <label for="Z">Max Z = x1 + x2: </label>
-                <input type="number" id="Z" placeholder="Введіть значення для Z" disabled><br><br>
+                <label for="c1">c1: </label>
+                <input type="number" id="c1" placeholder="Введіть c1" required><br><br>
+                <label for="c2">c2: </label>
+                <input type="number" id="c2" placeholder="Введіть c2" required><br><br>
             </div>
 
             <button type="submit">Розв'язати задачу</button>
@@ -133,7 +131,6 @@
             ];
 
             // Виконання симплекс-методу
-            let z = 0;
             let iterations = 0;
             while (true) {
                 let pivotColumn = -1;
@@ -183,7 +180,7 @@
             // Результат
             let optimalX1 = tableau[0][tableau[0].length - 1];
             let optimalX2 = tableau[1][tableau[1].length - 1];
-            z = -tableau[2][tableau[2].length - 1]; // Переведення для максимізації
+            let z = -tableau[2][tableau[2].length - 1]; // Переведення для максимізації
 
             return { optimalX1, optimalX2, z };
         }
@@ -201,8 +198,8 @@
             let x2_2 = parseFloat(document.getElementById('x2_2').value) || 0;
             let C2 = parseFloat(document.getElementById('C2').value) || 0;
 
-            let c1 = parseFloat(document.getElementById('x1').value) || 0;
-            let c2 = parseFloat(document.getElementById('x2').value) || 0;
+            let c1 = parseFloat(document.getElementById('c1').value) || 0;
+            let c2 = parseFloat(document.getElementById('c2').value) || 0;
 
             // Викликаємо симплекс-метод
             let result = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
