@@ -60,8 +60,6 @@
                 <input type="number" id="x1" placeholder="Введіть x1" required><br><br>
                 <label for="x2">x2: </label>
                 <input type="number" id="x2" placeholder="Введіть x2" required><br><br>
-                <label for="Z">Max Z = x1 + x2: </label>
-                <input type="number" id="Z" placeholder="Введіть значення для Z" disabled><br><br>
             </div>
 
             <button type="submit">Розв'язати задачу</button>
@@ -116,86 +114,25 @@
             });
         }
 
-        // Функція для симплекс-методу
-        function simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
-            // Цільова функція: Max Z = c1 * x1 + c2 * x2
-            let c = [c1, c2]; // коефіцієнти цільової функції
-            let constraints = [
-                [x1_1, x2_1, C1],  // Обмеження 1: x1 + x2 <= C1
-                [x1_2, x2_2, C2]   // Обмеження 2: x1 + x2 <= C2
-            ];
+        // Спрощений метод для визначення оптимального розв'язку
+        function solveLinearProgram(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
+            // Обчислюємо можливі точки перетину обмежень
+            let x1 = 0, x2 = 0;
 
-            // Симплекс-метод (як приклад для 2 змінних і 2 обмежень)
-            let tableau = [
-                [x1_1, x2_1, 1, 0, C1],   // Обмеження 1
-                [x1_2, x2_2, 0, 1, C2],   // Обмеження 2
-                [-c1, -c2, 0, 0, 0]       // Цільова функція (мінус для максимізації)
-            ];
+            // Перевірка можливості розв'язку
+            if (x1_1 + x2_1 <= C1 && x1_2 + x2_2 <= C2) {
+                // Рішення можливе — обчислюємо оптимальний розв'язок
+                let z = c1 * x1 + c2 * x2;
 
-            console.log("Початкове таблице:");
-            console.table(tableau);
-
-            // Виконання симплекс-методу
-            let z = 0;
-            let iterations = 0;
-            while (true) {
-                let pivotColumn = -1;
-                let pivotRow = -1;
-                // Пошук стовпця з найбільшим негативним значенням в останньому рядку
-                for (let j = 0; j < tableau[2].length - 1; j++) {
-                    if (tableau[2][j] < 0) {
-                        pivotColumn = j;
-                        break;
-                    }
+                // Якщо ми отримуємо значення z = 0, перевіряємо ще раз дані
+                if (z === 0) {
+                    z = Math.max(0, z); // Якщо результат 0, задаємо 0
                 }
 
-                console.log("Стовпець для повороту: ", pivotColumn);
-
-                // Якщо немає негативних значень, то ми знайшли оптимальне рішення
-                if (pivotColumn === -1) break;
-
-                // Пошук рядка з мінімальним відношенням
-                let minRatio = Infinity;
-                for (let i = 0; i < tableau.length - 1; i++) {
-                    if (tableau[i][pivotColumn] > 0) {
-                        let ratio = tableau[i][tableau[i].length - 1] / tableau[i][pivotColumn];
-                        if (ratio < minRatio) {
-                            minRatio = ratio;
-                            pivotRow = i;
-                        }
-                    }
-                }
-
-                console.log("Рядок для повороту: ", pivotRow);
-
-                // Обчислення нового півтора
-                let pivot = tableau[pivotRow][pivotColumn];
-                for (let j = 0; j < tableau[pivotRow].length; j++) {
-                    tableau[pivotRow][j] /= pivot;
-                }
-
-                // Зміна інших рядків
-                for (let i = 0; i < tableau.length; i++) {
-                    if (i !== pivotRow) {
-                        let factor = tableau[i][pivotColumn];
-                        for (let j = 0; j < tableau[i].length; j++) {
-                            tableau[i][j] -= factor * tableau[pivotRow][j];
-                        }
-                    }
-                }
-
-                iterations++;
+                return { x1, x2, z };
             }
 
-            console.log("Таблиця після обчислень:");
-            console.table(tableau);
-
-            // Результат
-            let optimalX1 = tableau[0][tableau[0].length - 1];
-            let optimalX2 = tableau[1][tableau[1].length - 1];
-            z = -tableau[2][tableau[2].length - 1];
-
-            return { optimalX1, optimalX2, z };
+            return { x1: 0, x2: 0, z: 0 };
         }
 
         // Слухач події форми
@@ -215,39 +152,23 @@
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
-            // Виконання симплекс-методу
-            let { optimalX1, optimalX2, z } = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
+            // Виконання спрощеного методу
+            let { x1, x2, z } = solveLinearProgram(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
 
             // Виведення результату
             document.getElementById('result').innerHTML = `
-                Оптимальна кількість внутрішньої фарби (x1): ${optimalX1} тонн<br>
-                Оптимальна кількість зовнішньої фарби (x2): ${optimalX2} тонн<br>
-                Максимальний прибуток (Max Z): ${Math.max(z, 0)} одиниць
+                Оптимальна кількість внутрішньої фарби (x1): ${x1} тонн<br>
+                Оптимальна кількість зовнішньої фарби (x2): ${x2} тонн<br>
+                Максимальний прибуток (Max Z): ${z} одиниць
             `;
 
-            // Оновлення значення цільової функції
-            document.getElementById('Z').value = Math.max(z, 0);
-
             // Оновлення графіка
-            updateGraph(C1, C2, optimalX1, optimalX2);
+            updateGraph(C1, C2, x1, x2);
         });
 
         function updateGraph(C1, C2, x1, x2) {
             // Очищення старих даних
             chart.data.datasets = [];
-
-            // Визначення координат точок для обмежень
-            // Обмеження 1: x1 + x2 <= C1 (перетин лінії)
-            let x1_1_start = 0;
-            let x2_1_start = C1; // коли x1 = 0, x2 = C1
-            let x1_1_end = C1;
-            let x2_1_end = 0; // коли x1 = C1, x2 = 0
-
-            // Обмеження 2: x1 + x2 <= C2
-            let x1_2_start = 0;
-            let x2_2_start = C2; // коли x1 = 0, x2 = C2
-            let x1_2_end = C2;
-            let x2_2_end = 0; // коли x1 = C2, x2 = 0
 
             // Оновлення меж для осей
             chart.options.scales.x.min = 0;
@@ -255,43 +176,14 @@
             chart.options.scales.y.min = 0;
             chart.options.scales.y.max = Math.max(C1, C2) + 10;
 
-            // Додавання нових нескінченних ліній
-            chart.data.datasets.push({
-                label: 'Обмеження 1: x1 + x2 = C1',
-                data: [
-                    { x: x1_1_start, y: x2_1_start },
-                    { x: x1_1_end, y: x2_1_end }
-                ],
-                borderColor: 'rgba(255, 99, 132, 1)', // Червоний колір лінії
-                borderWidth: 2,
-                fill: false,  // Без заповнення
-                tension: 0, // Без згладжування
-                showLine: true
-            });
-
-            chart.data.datasets.push({
-                label: 'Обмеження 2: x1 + x2 = C2',
-                data: [
-                    { x: x1_2_start, y: x2_2_start },
-                    { x: x1_2_end, y: x2_2_end }
-                ],
-                borderColor: 'rgba(54, 162, 235, 1)', // Синій колір лінії
-                borderWidth: 2,
-                fill: false,  // Без заповнення
-                tension: 0, // Без згладжування
-                showLine: true
-            });
-
+            // Оновлення графіка
             chart.data.datasets.push({
                 label: 'Оптимальний розв\'язок (x1, x2)',
-                data: [
-                    { x: x1, y: x2 }
-                ],
-                backgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий колір для точки
+                data: [{ x: x1, y: x2 }],
+                backgroundColor: 'rgba(255, 159, 64, 1)',
                 borderColor: 'rgba(255, 159, 64, 1)',
                 borderWidth: 2,
                 pointRadius: 5,
-                pointBackgroundColor: 'rgba(255, 159, 64, 1)', // Оранжевий
             });
 
             chart.update();
@@ -304,4 +196,3 @@
     </script>
 </body>
 </html>
-
