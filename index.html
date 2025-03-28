@@ -125,7 +125,7 @@
 
         // Функція для перевірки нескінченних значень
         function checkForInfiniteValues(values) {
-            return values.some(value => !isFinite(value));  // Перевірка на нескінченність та NaN
+            return values.some(value => !isFinite(value));  // Перевірка на нескінченність або NaN
         }
 
         // Функція для симплекс-методу
