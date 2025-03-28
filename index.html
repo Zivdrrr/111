@@ -131,7 +131,7 @@
         function simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
             // Перевірка на нескінченні значення
             if (checkForInfiniteValues(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2)) {
-                document.getElementById('error-message').innerText = "Помилка";
+                document.getElementById('error-message').innerText = "Помилка: вхідні значення містять нескінченні або некоректні значення.";
                 return null;
             }
 
@@ -180,7 +180,7 @@
 
                 // Перевірка, чи не є pivotRow або pivotColumn невизначеними
                 if (pivotRow === -1 || pivotColumn === -1) {
-                    document.getElementById('error-message').innerText = "Помилка";
+                    document.getElementById('error-message').innerText = "Помилка: не вдалося знайти відповідні стовпці або рядки для симплекс-методу.";
                     return null;
                 }
 
@@ -227,6 +227,9 @@
             // Отримуємо значення цільової функції вручну
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
+
+            // Очистка повідомлення про помилку перед виконанням обчислень
+            document.getElementById('error-message').innerText = '';
 
             // Виконання симплекс-методу
             let result = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
@@ -292,15 +295,17 @@
                 showLine: true
             });
 
+            // Додати точку оптимального рішення
             chart.data.datasets.push({
-                label: 'Оптимальний розв\'язок (x1, x2)',
-                data: [
-                    { x: x1, y: x2 }
-                ],
-                backgroundColor: 'rgba(255, 159, 64, 1)',
-                pointRadius: 5
+                label: 'Оптимальна точка (x1, x2)',
+                data: [{ x: x1, y: x2 }],
+                backgroundColor: 'rgba(75, 192, 192, 1)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                radius: 5,
+                showLine: false
             });
 
+            // Оновлення графіка
             chart.update();
         }
 
