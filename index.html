@@ -26,8 +26,9 @@
         form {
             margin-bottom: 20px;
         }
-        .error {
+        #error-message {
             color: red;
+            font-size: 18px;
             font-weight: bold;
         }
     </style>
@@ -71,10 +72,8 @@
             <button type="submit">Розв'язати задачу</button>
         </form>
 
-        <!-- Повідомлення про помилки -->
-        <div id="error-message" class="error"></div>
-
         <div id="result"></div>
+        <div id="error-message"></div>
 
         <!-- Місце для графіка -->
         <canvas id="chart"></canvas>
@@ -124,12 +123,18 @@
         }
 
         // Функція для перевірки нескінченних значень
-        function checkForInfiniteValues(values) {
-            return values.some(value => !isFinite(value));  // Перевірка на нескінченність або NaN
+        function checkForInfiniteValues(...values) {
+            return values.some(val => !isFinite(val) || val === Infinity || val === -Infinity);
         }
 
         // Функція для симплекс-методу
         function simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
+            // Перевірка на нескінченні значення
+            if (checkForInfiniteValues(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2)) {
+                document.getElementById('error-message').innerText = "Помилка: вхідні значення містять нескінченні або некоректні значення.";
+                return null;
+            }
+
             // Цільова функція: Max Z = c1 * x1 + c2 * x2
             let c = [c1, c2]; // коефіцієнти цільової функції
             let constraints = [
@@ -137,7 +142,6 @@
                 [x1_2, x2_2, C2]   // Обмеження 2: x1 + x2 <= C2
             ];
 
-            // Симплекс-метод (як приклад для 2 змінних і 2 обмежень)
             let tableau = [
                 [x1_1, x2_1, 1, 0, C1],   // Обмеження 1
                 [x1_2, x2_2, 0, 1, C2],   // Обмеження 2
@@ -147,9 +151,11 @@
             // Виконання симплекс-методу
             let z = 0;
             let iterations = 0;
+
             while (true) {
                 let pivotColumn = -1;
                 let pivotRow = -1;
+
                 // Пошук стовпця з найбільшим негативним значенням в останньому рядку
                 for (let j = 0; j < tableau[2].length - 1; j++) {
                     if (tableau[2][j] < 0) {
@@ -217,33 +223,22 @@
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
-            // Перевірка на нескінченні значення або NaN
-            let inputValues = [x1_1, x2_1, C1, x1_2, x2_2, C2, c1, c2];
-            console.log("Перевірка значень:", inputValues);
-            if (checkForInfiniteValues(inputValues)) {
-                console.log("Є нескінченні значення!");
-                document.getElementById('error-message').innerText = "Помилка: введені значення містять нескінченність або некоректні числа.";
-                return;
-            } else {
-                console.log("Немає нескінченних значень.");
-                document.getElementById('error-message').innerText = "";  // Очищення повідомлення про помилки
-            }
-
             // Виконання симплекс-методу
-            let { optimalX1, optimalX2, z } = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
+            let result = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
 
-            // Виведення результату
-            document.getElementById('result').innerHTML = `
-                Оптимальна кількість внутрішньої фарби (x1): ${optimalX1} тонн<br>
-                Оптимальна кількість зовнішньої фарби (x2): ${optimalX2} тонн<br>
-                Максимальний прибуток (Max Z): ${z} одиниць
-            `;
+            if (result) {
+                // Виведення результату
+                document.getElementById('result').innerHTML = `
+                    Оптимальна кількість внутрішньої фарби (x1): ${result.optimalX1} тонн<br>
+                    Оптимальна кількість зовнішньої фарби (x2): ${result.optimalX2} тонн<br>
+                    Максимальний прибуток (Max Z): ${result.z} одиниць
+                `;
+                // Оновлення значення цільової функції
+                document.getElementById('Z').value = result.z;
 
-            // Оновлення значення цільової функції
-            document.getElementById('Z').value = z;
-
-            // Оновлення графіка
-            updateGraph(C1, C2, optimalX1, optimalX2);
+                // Оновлення графіка
+                updateGraph(C1, C2, result.optimalX1, result.optimalX2);
+            }
         });
 
         function updateGraph(C1, C2, x1, x2) {
@@ -251,45 +246,56 @@
             chart.data.datasets = [];
 
             // Визначення координат точок для обмежень
-            // Обмеження 1: x1 + x2 <= C1 (перетин лінії)
             let x1_1_start = 0;
-            let x2_1_start = C1; // коли x1 = 0, x2 = C1
+            let x2_1_start = C1;
             let x1_1_end = C1;
-            let x2_1_end = 0; // коли x1 = C1, x2 = 0
+            let x2_1_end = 0;
 
-            // Обмеження 2: x1 + x2 <= C2
             let x1_2_start = 0;
-            let x2_2_start = C2; // коли x1 = 0, x2 = C2
+            let x2_2_start = C2;
             let x1_2_end = C2;
-            let x2_2_end = 0; // коли x1 = C2, x2 = 0
+            let x2_2_end = 0;
 
-            // Додавання даних для графіка
+            chart.options.scales.x.min = 0;
+            chart.options.scales.x.max = Math.max(C1, C2) + 5;
+            chart.options.scales.y.min = 0;
+            chart.options.scales.y.max = Math.max(C1, C2) + 5;
+
             chart.data.datasets.push({
-                label: "Обмеження 1: x1 + x2 ≤ C1",
-                data: [{x: x1_1_start, y: x2_1_start}, {x: x1_1_end, y: x2_1_end}],
-                borderColor: 'red',
+                label: 'Обмеження 1: x1 + x2 = C1',
+                data: [
+                    { x: x1_1_start, y: x2_1_start },
+                    { x: x1_1_end, y: x2_1_end }
+                ],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
                 fill: false,
-                tension: 0.1
+                tension: 0,
+                showLine: true
             });
 
             chart.data.datasets.push({
-                label: "Обмеження 2: x1 + x2 ≤ C2",
-                data: [{x: x1_2_start, y: x2_2_start}, {x: x1_2_end, y: x2_2_end}],
-                borderColor: 'blue',
+                label: 'Обмеження 2: x1 + x2 = C2',
+                data: [
+                    { x: x1_2_start, y: x2_2_start },
+                    { x: x1_2_end, y: x2_2_end }
+                ],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
                 fill: false,
-                tension: 0.1
+                tension: 0,
+                showLine: true
             });
 
-            // Додавання точки оптимального розв'язку
             chart.data.datasets.push({
-                label: "Оптимальний розв'язок",
-                data: [{x: x1, y: x2}],
-                backgroundColor: 'green',
-                borderColor: 'green',
+                label: 'Оптимальний розв\'язок (x1, x2)',
+                data: [
+                    { x: x1, y: x2 }
+                ],
+                backgroundColor: 'rgba(255, 159, 64, 1)',
                 pointRadius: 5
             });
 
-            // Оновлення графіка
             chart.update();
         }
 
@@ -298,4 +304,3 @@
     </script>
 </body>
 </html>
-
