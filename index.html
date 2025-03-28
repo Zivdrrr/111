@@ -124,7 +124,7 @@
 
         // Функція для перевірки нескінченних значень
         function checkForInfiniteValues(values) {
-            return values.some(value => !isFinite(value));  // Перевірка на нескінченні чи NaN значення
+            return values.some(value => !isFinite(value));  // Перевірка на нескінченність та NaN
         }
 
         // Функція для симплекс-методу
@@ -216,9 +216,9 @@
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
-            // Перевірка на нескінченні значення
+            // Перевірка на нескінченні значення або NaN
             if (checkForInfiniteValues([x1_1, x2_1, C1, x1_2, x2_2, C2, c1, c2])) {
-                document.getElementById('error-message').innerText = "Помилка координат: введені значення містять нескінченність.";
+                document.getElementById('error-message').innerText = "Помилка координат: введені значення містять нескінченність або неправильні числа.";
                 return;
             } else {
                 document.getElementById('error-message').innerText = "";  // Очищення повідомлення про помилки
