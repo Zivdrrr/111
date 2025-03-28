@@ -28,6 +28,7 @@
         }
         .error {
             color: red;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -218,7 +219,7 @@
 
             // Перевірка на нескінченні значення або NaN
             if (checkForInfiniteValues([x1_1, x2_1, C1, x1_2, x2_2, C2, c1, c2])) {
-                document.getElementById('error-message').innerText = "Помилка координат: введені значення містять нескінченність або неправильні числа.";
+                document.getElementById('error-message').innerText = "Помилка: введені значення містять нескінченність або некоректні числа. Перевірте введені координати.";
                 return;
             } else {
                 document.getElementById('error-message').innerText = "";  // Очищення повідомлення про помилки
