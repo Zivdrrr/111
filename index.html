@@ -218,10 +218,14 @@
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
             // Перевірка на нескінченні значення або NaN
-            if (checkForInfiniteValues([x1_1, x2_1, C1, x1_2, x2_2, C2, c1, c2])) {
+            let inputValues = [x1_1, x2_1, C1, x1_2, x2_2, C2, c1, c2];
+            console.log("Перевірка на нескінченні значення:", inputValues);
+            if (checkForInfiniteValues(inputValues)) {
+                console.log("Є нескінченні значення!");
                 document.getElementById('error-message').innerText = "Помилка: введені значення містять нескінченність або некоректні числа. Перевірте введені координати.";
                 return;
             } else {
+                console.log("Немає нескінченних значень.");
                 document.getElementById('error-message').innerText = "";  // Очищення повідомлення про помилки
             }
 
