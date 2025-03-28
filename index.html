@@ -188,6 +188,11 @@
             return { optimalX1, optimalX2, z };
         }
 
+        // Перевірка на нескінченні координати
+        function isValidCoordinate(value) {
+            return isFinite(value) && !isNaN(value);
+        }
+
         // Слухач події форми
         document.getElementById('form').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -200,6 +205,12 @@
             let x1_2 = parseFloat(document.getElementById('x1_2').value) || 0;
             let x2_2 = parseFloat(document.getElementById('x2_2').value) || 0;
             let C2 = parseFloat(document.getElementById('C2').value) || 0;
+
+            // Перевірка на валідність координат
+            if (![x1_1, x2_1, C1, x1_2, x2_2, C2].every(isValidCoordinate)) {
+                alert('Помилка координат');
+                return;
+            }
 
             // Отримуємо значення цільової функції вручну
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
