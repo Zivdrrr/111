@@ -37,10 +37,9 @@
     <div class="container">
         <h1>Задача лінійного програмування (Максимізація прибутку)</h1>
 
-        <!-- Форма вводу для обмежень -->
         <form id="form">
             <div>
-                <h3>Обмеження 1 (x1 + x2 ≤ C1):</h3>
+                <h3>Обмеження 1 (x1 * a + x2 * b ≤ C1):</h3>
                 <label for="x1_1">x1: </label>
                 <input type="number" id="x1_1" placeholder="Введіть x1"><br><br>
                 <label for="x2_1">x2: </label>
@@ -50,7 +49,7 @@
             </div>
 
             <div>
-                <h3>Обмеження 2 (x1 + x2 ≤ C2):</h3>
+                <h3>Обмеження 2 (x1 * a + x2 * b ≤ C2):</h3>
                 <label for="x1_2">x1: </label>
                 <input type="number" id="x1_2" placeholder="Введіть x1"><br><br>
                 <label for="x2_2">x2: </label>
@@ -60,7 +59,7 @@
             </div>
 
             <div>
-                <h3>Цільова функція (Max Z):</h3>
+                <h3>Цільова функція (Max Z = x1 * c1 + x2 * c2):</h3>
                 <label for="x1">x1: </label>
                 <input type="number" id="x1" placeholder="Введіть x1" required><br><br>
                 <label for="x2">x2: </label>
@@ -74,15 +73,12 @@
 
         <div id="result"></div>
         <div id="error-message"></div>
-
-        <!-- Місце для графіка -->
         <canvas id="chart"></canvas>
     </div>
 
     <script>
-        var chart; // Глобальна змінна для графіка
+        var chart;
 
-        // Функція для ініціалізації графіка
         function initChart() {
             var ctx = document.getElementById('chart').getContext('2d');
             chart = new Chart(ctx, {
@@ -94,8 +90,8 @@
                     responsive: true,
                     scales: {
                         x: {
-                            min: 0, // Мінімум для осі x
-                            max: 20,  // Максимум для осі x
+                            min: 0,
+                            max: 20,
                             title: {
                                 display: true,
                                 text: 'x1 (внутрішня фарба)',
@@ -106,8 +102,8 @@
                             }
                         },
                         y: {
-                            min: 0, // Мінімум для осі y
-                            max: 20,  // Максимум для осі y
+                            min: 0,
+                            max: 20,
                             title: {
                                 display: true,
                                 text: 'x2 (зовнішня фарба)',
@@ -117,60 +113,42 @@
                                 color: 'rgba(255, 255, 255, 0.5)'
                             }
                         }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
                     }
                 }
             });
         }
 
-        // Функція для перевірки нескінченних значень
         function checkForInfiniteValues(...values) {
             return values.some(val => !isFinite(val) || val === Infinity || val === -Infinity);
         }
 
-        // Функція для симплекс-методу
         function simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2) {
-            // Перевірка на нескінченні значення
             if (checkForInfiniteValues(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2)) {
-                document.getElementById('error-message').innerText = "Помилка";
+                document.getElementById('error-message').innerText = "Помилка у введених значеннях";
                 return null;
             }
 
-            // Цільова функція: Max Z = c1 * x1 + c2 * x2
-            let c = [c1, c2]; // коефіцієнти цільової функції
-            let constraints = [
-                [x1_1, x2_1, C1],  // Обмеження 1: x1 + x2 <= C1
-                [x1_2, x2_2, C2]   // Обмеження 2: x1 + x2 <= C2
-            ];
-
             let tableau = [
-                [x1_1, x2_1, 1, 0, C1],   // Обмеження 1
-                [x1_2, x2_2, 0, 1, C2],   // Обмеження 2
-                [-c1, -c2, 0, 0, 0]       // Цільова функція (мінус для максимізації)
+                [x1_1, x2_1, 1, 0, C1],
+                [x1_2, x2_2, 0, 1, C2],
+                [-c1, -c2, 0, 0, 0]
             ];
-
-            let z = 0;
-            let iterations = 0;
 
             while (true) {
-                let pivotColumn = -1;
-                let pivotRow = -1;
-
-                // Пошук стовпця з найбільшим негативним значенням в останньому рядку
-                for (let j = 0; j < tableau[2].length - 1; j++) {
-                    if (tableau[2][j] < 0) {
-                        pivotColumn = j;
-                        break;
-                    }
-                }
-
-                // Якщо немає негативних значень, то ми знайшли оптимальне рішення
+                let pivotColumn = tableau[2].slice(0, -1).findIndex(value => value < 0);
                 if (pivotColumn === -1) break;
 
-                // Пошук рядка з мінімальним відношенням
-                let minRatio = Infinity;
-                for (let i = 0; i < tableau.length - 1; i++) {
+                let pivotRow = -1, minRatio = Infinity;
+                for (let i = 0; i < 2; i++) {
                     if (tableau[i][pivotColumn] > 0) {
-                        let ratio = tableau[i][tableau[i].length - 1] / tableau[i][pivotColumn];
+                        let ratio = tableau[i][4] / tableau[i][pivotColumn];
                         if (ratio < minRatio) {
                             minRatio = ratio;
                             pivotRow = i;
@@ -178,44 +156,36 @@
                     }
                 }
 
-                // Перевірка, чи не є pivotRow або pivotColumn невизначеними
-                if (pivotRow === -1 || pivotColumn === -1) {
-                    document.getElementById('error-message').innerText = "Помилка";
+                if (pivotRow === -1) {
+                    document.getElementById('error-message').innerText = "Немає допустимого рішення";
                     return null;
                 }
 
-                // Обчислення нового півтора
                 let pivot = tableau[pivotRow][pivotColumn];
-                for (let j = 0; j < tableau[pivotRow].length; j++) {
+                for (let j = 0; j < 5; j++) {
                     tableau[pivotRow][j] /= pivot;
                 }
 
-                // Зміна інших рядків
-                for (let i = 0; i < tableau.length; i++) {
+                for (let i = 0; i < 3; i++) {
                     if (i !== pivotRow) {
                         let factor = tableau[i][pivotColumn];
-                        for (let j = 0; j < tableau[i].length; j++) {
+                        for (let j = 0; j < 5; j++) {
                             tableau[i][j] -= factor * tableau[pivotRow][j];
                         }
                     }
                 }
-
-                iterations++;
             }
 
-            // Результат
-            let optimalX1 = tableau[0][tableau[0].length - 1];
-            let optimalX2 = tableau[1][tableau[1].length - 1];
-            z = tableau[2][tableau[2].length - 1];  // Оскільки ми використовуємо мінус для максимізації, результат буде позитивним
+            let optimalX1 = tableau[0][0] === 1 ? tableau[0][4] : 0;
+            let optimalX2 = tableau[1][1] === 1 ? tableau[1][4] : 0;
+            let z = tableau[2][4];
 
             return { optimalX1, optimalX2, z };
         }
 
-        // Слухач події форми
         document.getElementById('form').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // Отримуємо значення з форми
             let x1_1 = parseFloat(document.getElementById('x1_1').value) || 0;
             let x2_1 = parseFloat(document.getElementById('x2_1').value) || 0;
             let C1 = parseFloat(document.getElementById('C1').value) || 0;
@@ -224,93 +194,70 @@
             let x2_2 = parseFloat(document.getElementById('x2_2').value) || 0;
             let C2 = parseFloat(document.getElementById('C2').value) || 0;
 
-            // Отримуємо значення цільової функції вручну
             let c1 = parseFloat(document.getElementById('x1').value) || 0;
             let c2 = parseFloat(document.getElementById('x2').value) || 0;
 
-            // Очистка повідомлення про помилку перед виконанням обчислень
             document.getElementById('error-message').innerText = '';
 
-            // Виконання симплекс-методу
             let result = simplexMethod(c1, c2, x1_1, x2_1, C1, x1_2, x2_2, C2);
 
             if (result) {
-                // Виведення результату
                 document.getElementById('result').innerHTML = `
                     Оптимальна кількість внутрішньої фарби (x1): ${result.optimalX1} тонн<br>
                     Оптимальна кількість зовнішньої фарби (x2): ${result.optimalX2} тонн<br>
                     Максимальний прибуток (Max Z): ${result.z} одиниць
                 `;
-                // Оновлення значення цільової функції
                 document.getElementById('Z').value = result.z;
 
-                // Оновлення графіка
-                updateGraph(C1, C2, result.optimalX1, result.optimalX2);
+                updateGraph(x1_1, x2_1, C1, x1_2, x2_2, C2, result.optimalX1, result.optimalX2);
             }
         });
 
-        function updateGraph(C1, C2, x1, x2) {
-            // Очищення старих даних
+        function updateGraph(a1, b1, c1, a2, b2, c2, xOpt, yOpt) {
             chart.data.datasets = [];
 
-            // Визначення координат точок для обмежень
-            let x1_1_start = 0;
-            let x2_1_start = C1;
-            let x1_1_end = C1;
-            let x2_1_end = 0;
-
-            let x1_2_start = 0;
-            let x2_2_start = C2;
-            let x1_2_end = C2;
-            let x2_2_end = 0;
-
-            chart.options.scales.x.min = 0;
-            chart.options.scales.x.max = Math.max(C1, C2) + 5;
-            chart.options.scales.y.min = 0;
-            chart.options.scales.y.max = Math.max(C1, C2) + 5;
+            function constraintPoints(a, b, c) {
+                let points = [];
+                if (b !== 0) points.push({ x: 0, y: c / b });
+                if (a !== 0) points.push({ x: c / a, y: 0 });
+                return points;
+            }
 
             chart.data.datasets.push({
-                label: 'Обмеження 1: x1 + x2 = C1',
-                data: [
-                    { x: x1_1_start, y: x2_1_start },
-                    { x: x1_1_end, y: x2_1_end }
-                ],
-                borderColor: 'rgba(255, 99, 132, 1)',
+                label: 'Обмеження 1',
+                data: constraintPoints(a1, b1, c1),
+                borderColor: 'red',
                 borderWidth: 2,
                 fill: false,
-                tension: 0,
                 showLine: true
             });
 
             chart.data.datasets.push({
-                label: 'Обмеження 2: x1 + x2 = C2',
-                data: [
-                    { x: x1_2_start, y: x2_2_start },
-                    { x: x1_2_end, y: x2_2_end }
-                ],
-                borderColor: 'rgba(54, 162, 235, 1)',
+                label: 'Обмеження 2',
+                data: constraintPoints(a2, b2, c2),
+                borderColor: 'blue',
                 borderWidth: 2,
                 fill: false,
-                tension: 0,
                 showLine: true
             });
 
-            // Додати точку оптимального рішення
             chart.data.datasets.push({
-                label: 'Оптимальна точка (x1, x2)',
-                data: [{ x: x1, y: x2 }],
-                backgroundColor: 'rgba(75, 192, 192, 1)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: 'Оптимальна точка',
+                data: [{ x: xOpt, y: yOpt }],
+                backgroundColor: 'lime',
+                borderColor: 'white',
                 radius: 5,
                 showLine: false
             });
 
-            // Оновлення графіка
+            chart.options.scales.x.max = Math.max(c1, c2) + 5;
+            chart.options.scales.y.max = Math.max(c1, c2) + 5;
+
             chart.update();
         }
 
-        // Ініціалізація графіка
         initChart();
     </script>
 </body>
 </html>
+
